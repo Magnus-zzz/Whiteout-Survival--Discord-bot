@@ -42,3 +42,6 @@
 
 ## Additional Cleanup
 - [x] Removed hardcoded API tokens from imagine.py and api_manager.py
+
+## Attribution Update
+- [x] Add "Coded by Magnus" to all Python files (app.py, api_manager.py, event_tips.py, angel_personality.py, imagine.py)
