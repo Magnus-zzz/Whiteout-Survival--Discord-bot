@@ -1,4 +1,6 @@
 """
+# Coded by Magnus
+
 Event Tips System for Whiteout Survival
 Converted from JavaScript to Python with enhanced functionality
 

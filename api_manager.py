@@ -1,3 +1,5 @@
+# Coded by Magnus
+
 """
 Advanced OpenRouter API Key Manager with Robust Failover System
 

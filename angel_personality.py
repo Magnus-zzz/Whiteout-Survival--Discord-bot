@@ -1,3 +1,5 @@
+# Coded by Magnus
+
 """
 Angel's Personalized Chat System for Discord Bot
 
