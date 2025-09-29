@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Coded by Magnus
+
 """
 Image generation script using Hugging Face API
 Usage: python3 imagine.py "your prompt here"
