@@ -9,11 +9,9 @@ import logging
 from api_manager import make_request, manager, make_image_request
 
 from angel_personality import get_system_prompt, angel_personality
-from user_mapping import get_known_user_name
 from gift_codes import get_active_gift_codes
 from reminder_system import ReminderSystem
 from event_tips import EVENT_TIPS, get_event_info
-from thinking_animation import ThinkingAnimation
 import sys
 import signal
 import asyncio
@@ -80,7 +78,6 @@ except Exception:
 
 # Initialize systems
 reminder_system = ReminderSystem(bot)
-thinking_animation = ThinkingAnimation()
 
 # Conversation history storage: user_id -> list of message dicts
 conversation_history = {}
@@ -138,10 +135,8 @@ async def event_autocomplete(interaction: discord.Interaction, current: str):
 @app_commands.describe(event_name="Type the event name (e.g. bear, foundry)")
 @app_commands.autocomplete(event_name=event_autocomplete)
 async def event(interaction: discord.Interaction, event_name: str):
+    await interaction.response.defer(thinking=True)
     try:
-        # Show thinking animation while processing
-        await thinking_animation.show_thinking(interaction)
-
         event_info = get_event_info(event_name.lower())
         if not event_info:
             error_embed = discord.Embed(
@@ -149,16 +144,7 @@ async def event(interaction: discord.Interaction, event_name: str):
                 description=f"Event '{event_name}' not found. Try using the autocomplete suggestions.",
                 color=0xff0000
             )
-            # Try to edit animation message with error
-            if thinking_animation.animation_message:
-                try:
-                    await thinking_animation.animation_message.edit(embed=error_embed)
-                    logger.info("Successfully edited animation message with event not found error")
-                except Exception as edit_error:
-                    logger.error(f"Failed to edit animation message with error: {edit_error}")
-                    await interaction.followup.send(embed=error_embed, ephemeral=True)
-            else:
-                await interaction.followup.send(embed=error_embed, ephemeral=True)
+            await interaction.followup.send(embed=error_embed, ephemeral=True)
             return
 
         embed = discord.Embed(
@@ -176,23 +162,10 @@ async def event(interaction: discord.Interaction, event_name: str):
 
         embed.description = description
 
-        # Stop the animation before editing the message
-        await thinking_animation.stop_thinking(interaction, delete_message=False)
-
-        # Edit the animation message with the event information
-        if thinking_animation.animation_message:
-            try:
-                await thinking_animation.animation_message.edit(
-                    content=f"{interaction.user.display_name} requested info about: `{event_name}`",
-                    embed=embed
-                )
-                logger.info("Successfully edited animation message with event information")
-            except Exception as edit_error:
-                logger.error(f"Failed to edit animation message with event info: {edit_error}")
-                # Fallback to followup send
-                await interaction.followup.send(embed=embed)
-        else:
-            await interaction.followup.send(embed=embed)
+        await interaction.followup.send(
+            content=f"{interaction.user.display_name} requested info about: `{event_name}`",
+            embed=embed
+        )
 
     except Exception as e:
         logger.error(f"Error in event command: {e}")
@@ -201,19 +174,7 @@ async def event(interaction: discord.Interaction, event_name: str):
             description="I encountered an error while fetching event information. Please try again.",
             color=0xff0000
         )
-        try:
-            # Try to edit animation message with error
-            if thinking_animation.animation_message:
-                await thinking_animation.animation_message.edit(embed=error_embed)
-            else:
-                await interaction.followup.send(embed=error_embed, ephemeral=True)
-        except Exception as edit_error:
-            logger.error(f"Failed to send error message: {edit_error}")
-            # Final fallback
-            try:
-                await interaction.followup.send(embed=error_embed, ephemeral=True)
-            except Exception as final_error:
-                logger.error(f"Failed to send final error message: {final_error}")
+        await interaction.followup.send(embed=error_embed, ephemeral=True)
 
 
 
