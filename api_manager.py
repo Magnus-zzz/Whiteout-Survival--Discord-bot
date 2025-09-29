@@ -255,10 +255,9 @@ async def make_image_request(prompt: str, api_key: str = None) -> bytes:
 
     # First try Hugging Face
     hf_tokens = [
-        os.getenv('HUGGINGFACE_API_TOKEN', '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'),
+        os.getenv('HUGGINGFACE_API_TOKEN'),
         os.getenv('HUGGINGFACE_API_TOKEN_1'),
-        os.getenv('HUGGINGFACE_API_TOKEN_2'),
-        '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'
+        os.getenv('HUGGINGFACE_API_TOKEN_2')
     ]
     hf_tokens = [token for token in hf_tokens if token]
 

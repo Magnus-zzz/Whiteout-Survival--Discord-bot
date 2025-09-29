@@ -39,3 +39,6 @@
 - Running the bot
 - Deployment info
 - License
+
+## Additional Cleanup
+- [x] Removed hardcoded API tokens from imagine.py and api_manager.py

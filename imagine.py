@@ -17,9 +17,11 @@ def generate_image(prompt, output_dir="generated_images", max_retries=2):
     
     # Multiple API tokens for fallback
     api_tokens = [
-        os.getenv('HUGGINGFACE_API_TOKEN', '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'),
-        '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'
+        os.getenv('HUGGINGFACE_API_TOKEN'),
+        os.getenv('HUGGINGFACE_API_TOKEN_1'),
+        os.getenv('HUGGINGFACE_API_TOKEN_2')
     ]
+    api_tokens = [token for token in api_tokens if token]
     
     model = os.getenv('HUGGINGFACE_MODEL', 'stabilityai/stable-diffusion-xl-base-1.0')
     
