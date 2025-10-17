@@ -713,13 +713,13 @@ class ReminderSystem:
                     user = self.bot.get_user(int(reminder['user_id']))
                     user_mention = f"<@{reminder['user_id']}>" if user else "Unknown User"
                     
-                    # Create reminder alert embed with colorful formatting
+                    # Create reminder alert embed with simple text formatting
                     embed = discord.Embed(
-                        title="🔔 **REMINDER ALERT!**",
-                        description=f"```ansi\n\u001b[1;33m{reminder['message']}\u001b[0m\n```",
-                        color=0xFF6B6B
+                        title="⏰ **REMINDER**" ,
+                        description=f"{reminder['message']}",
+                        color=0x84d4f3  # Light blue - Modified for jeronimo theme
                     )
-                    embed.set_thumbnail(url=REMINDER_IMAGES['alert'])
+                    embed.set_thumbnail(url="https://i.postimg.cc/3wMcML9z/c57699f1-c7bd-4c7b-82dd-542d0f541a27-removebg-preview.png")  # Horror-themed image - Modified for horror theme
                     
                     # Send the reminder with appropriate mention based on stored setting
                     mention_text = ""
@@ -731,7 +731,10 @@ class ReminderSystem:
 
                     if channel is not None:
                         try:
-                            await channel.send(content=mention_text, embed=embed)
+                            # Send embed first
+                            await channel.send(embed=embed)
+                            # Then send the mention as a separate message
+                            await channel.send(content=mention_text)
                         except Exception as e:
                             logger.warning(f"Failed to send reminder {reminder['id']} to channel {reminder.get('channel_id')}: {e}")
                             # Don't re-raise; continue to next reminder
